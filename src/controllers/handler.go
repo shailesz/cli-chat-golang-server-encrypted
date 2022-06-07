@@ -1,31 +1,19 @@
-package handlers
+package controllers
 
 import (
 	"log"
 
 	socketio "github.com/googollee/go-socket.io"
-	"github.com/shailesz/cli-chat-golang-server/src/controllers"
 	"github.com/shailesz/cli-chat-golang-server/src/models"
 )
 
-var Server *socketio.Server = InitHandlers()
-
-func InitHandlers() *socketio.Server {
-	server := socketio.NewServer(nil)
-
-	server.OnConnect("/", OnConnectHandler)
-	server.OnEvent("/", "auth", LoginHandler)
-	server.OnEvent("/", "signup", SignupHandler)
-	server.OnEvent("/", "chat", func(s socketio.Conn, msg models.ChatMessage) {
-		server.BroadcastToRoom("/", "chatroom", "message", msg)
-	})
-	server.OnError("/", ErrorHandler)
-
-	log.Println("Websocket server setup!")
-
-	return server
+// ChatHandler handles outgoing messages to connected users.
+func ChatHandler(s socketio.Conn, msg models.ChatMessage) {
+	Server.BroadcastToRoom("/", "chatroom", "message", msg)
+	SaveChat(msg)
 }
 
+// OnConnectHandler handles client on connect.
 func OnConnectHandler(s socketio.Conn) error {
 	s.SetContext("")
 	log.Println("connected:", s.ID())
@@ -33,8 +21,9 @@ func OnConnectHandler(s socketio.Conn) error {
 	return nil
 }
 
+// LoginHandler handles login/authentication messages.
 func LoginHandler(s socketio.Conn, user models.User) {
-	status := controllers.Authenticate(user.Username, user.Password)
+	status := Authenticate(user.Username, user.Password)
 
 	if status == 200 {
 		res := models.AuthMessage{Status: 200, Data: user}
@@ -45,8 +34,9 @@ func LoginHandler(s socketio.Conn, user models.User) {
 	}
 }
 
+// SignupHandler handles signup messages.
 func SignupHandler(s socketio.Conn, user models.User) {
-	status := controllers.Signup(user.Username, user.Password)
+	status := Signup(user.Email, user.Username, user.Password)
 
 	if status == 200 {
 		res := models.AuthMessage{Status: 200, Data: user}
@@ -57,6 +47,7 @@ func SignupHandler(s socketio.Conn, user models.User) {
 	}
 }
 
+// ErrorHandler handles error messages.
 func ErrorHandler(s socketio.Conn, e error) {
 	log.Panicln("meet error:", e)
 }

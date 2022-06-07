@@ -6,10 +6,16 @@ import (
 	"log"
 	"os"
 
+	socketio "github.com/googollee/go-socket.io"
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
-var Conn *pgxpool.Pool
+// InitWebsocket helps to create a new websocket server initialization.
+func InitWebsocket() *socketio.Server {
+	server := socketio.NewServer(nil)
+
+	return server
+}
 
 func InitDatabaseConnection() *pgxpool.Pool {
 	// hardcoded db url
@@ -26,8 +32,4 @@ func InitDatabaseConnection() *pgxpool.Pool {
 	log.Println("Database connection successful.")
 
 	return conn
-}
-
-func InitApp() {
-	Conn = InitDatabaseConnection()
 }

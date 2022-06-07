@@ -6,16 +6,17 @@ import (
 )
 
 // SignUp creates a user.
-func Signup(u, p string) int {
+func Signup(e, u, p string) int {
 	hp := helpers.Sha256(p)
-	services.CreateUser(u, hp)
+	services.CreateUser(Conn, e, u, hp)
 
 	return 200
 }
 
+// Authenticate validates a user.
 func Authenticate(u, p string) int {
 	hp := helpers.Sha256(p)
-	services.Login(u, hp)
+	services.Login(Conn, u, hp)
 
 	return 200
 }
