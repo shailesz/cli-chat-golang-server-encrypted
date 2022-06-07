@@ -2,8 +2,6 @@ package services
 
 import (
 	"context"
-	"fmt"
-	"os"
 
 	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
@@ -26,8 +24,8 @@ func CreateUser(conn *pgxpool.Pool, e, u, p string) int {
 		pgx.CopyFromRows(rows),
 	)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to create user: %v\n", err)
-		os.Exit(1)
+
+		return 409
 	}
 
 	return 200

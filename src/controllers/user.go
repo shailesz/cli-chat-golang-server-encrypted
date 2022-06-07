@@ -8,9 +8,9 @@ import (
 // SignUp creates a user.
 func Signup(e, u, p string) int {
 	hp := helpers.Sha256(p)
-	services.CreateUser(Conn, e, u, hp)
+	status := services.CreateUser(Conn, e, u, hp)
 
-	return 200
+	return status
 }
 
 // Authenticate validates a user.

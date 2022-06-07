@@ -38,13 +38,8 @@ func LoginHandler(s socketio.Conn, user models.User) {
 func SignupHandler(s socketio.Conn, user models.User) {
 	status := Signup(user.Email, user.Username, user.Password)
 
-	if status == 200 {
-		res := models.AuthMessage{Status: 200, Data: user}
-		s.Emit("signup", res)
-	} else {
-		res := models.AuthMessage{Status: 404, Data: user}
-		s.Emit("signup", res)
-	}
+	res := models.AuthMessage{Status: status, Data: user}
+	s.Emit("signup", res)
 }
 
 // ErrorHandler handles error messages.
