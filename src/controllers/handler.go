@@ -36,7 +36,7 @@ func LoginHandler(s socketio.Conn, user models.User) {
 
 // SignupHandler handles signup messages.
 func SignupHandler(s socketio.Conn, user models.User) {
-	status := Signup(user.Email, user.Username, user.Password)
+	status := Signup(user)
 
 	res := models.AuthMessage{Status: status, Data: user}
 	s.Emit("signup", res)
